@@ -1,5 +1,7 @@
 package main
 
+import "errors"
+
 type Note int
 
 const (
@@ -33,12 +35,26 @@ var intervals = map[int]string{
 	12: "Perfect Octave",
 }
 
+type ChordType struct {
+	Name      string
+	Intervals []uint
+}
+
+var chordTypes0 = map[string][]uint{
+	"Major Triad": {4, 7},
+	"Minor Triad": {3, 7},
+}
+
+/*
+TODO:
+- implement bi-directional hashmap
+- implement hashset
+
+then chord types can be a bi-directional map of {set of notes : chord name}
+*/
+
 func initScale() *CircularList[Note] {
 	var scale = NewCircularList[Note](12)
-
-	if scale.Size != 12 {
-		panic("scale is not the right size!")
-	}
 
 	scale.set(0, Note(A))
 	scale.set(1, Note(ASharp))
@@ -56,10 +72,35 @@ func initScale() *CircularList[Note] {
 	return scale
 }
 
-func calculateInterval(lowerNote Note, higherNote Note) string {
+func calculateInterval(scale *CircularList[Note], lowerNote Note, higherNote Note) (string, error) {
+	//todo: get both values out of modulo to determine differences in octave
+	lowerNoteIndex, err := scale.getByVal(lowerNote)
+	if err != nil {
+		return "", errors.New("Could not locate lower note")
+	}
+
+	higherNoteIndex, err := scale.getByVal(higherNote)
+	if err != nil {
+		return "", errors.New("Could not locate higher note")
+	}
+
+	semitones := higherNoteIndex - lowerNoteIndex
+
+	if semitones > 12 {
+		//todo: improve this error message
+		return "", errors.New("Determined difference in semitones to be invalid")
+	}
+
+	interval := intervals[int(semitones)]
+	return interval, nil
 }
 
 func main() {
 	scale := initScale()
-	head := scale
+
+	interval, err := calculateInterval(scale, Note(ASharp), Note(D))
+	if err != nil {
+		println(err)
+	}
+	println(interval)
 }
