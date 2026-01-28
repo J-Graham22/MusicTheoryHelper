@@ -19,6 +19,26 @@ const (
 	GSharp
 )
 
+var noteNames = map[string]Note{
+	"A":  Note(A),
+	"A#": Note(ASharp),
+	"Bb": Note(ASharp),
+	"B":  Note(B),
+	"C":  Note(C),
+	"C#": Note(CSharp),
+	"Db": Note(CSharp),
+	"D":  Note(D),
+	"D#": Note(DSharp),
+	"Eb": Note(DSharp),
+	"E":  Note(E),
+	"F":  Note(F),
+	"F#": Note(FSharp),
+	"Gb": Note(FSharp),
+	"G":  Note(G),
+	"G#": Note(GSharp),
+	"Ab": Note(GSharp),
+}
+
 var intervals = map[int]string{
 	0:  "Perfect Unison",
 	1:  "Minor Second",
